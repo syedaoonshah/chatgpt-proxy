@@ -1,113 +1,62 @@
-# Railway Caddyfile - ChatGPT.com Reverse Proxy Configuration
-# Railway automatically provides HTTPS and domain
+# Simplified Railway Caddyfile for ChatGPT Reverse Proxy
 
 # Global configuration
 {
     # Disable automatic HTTPS since Railway handles it
     auto_https off
     
-    # Admin API (optional, for monitoring)
-    admin 0.0.0.0:2019
+    # Disable admin API to avoid conflicts
+    admin off
     
-    # Logging configuration
+    # Simplified logging
     log {
         level INFO
-        format json
     }
 }
 
-# Main server block - Railway assigns port via $PORT environment variable
-:{$PORT} {
+# Main server - Railway assigns port via $PORT environment variable
+:{$PORT:8080} {
     # Health check endpoint
     handle /health {
-        respond "ChatGPT Reverse Proxy - Status: OK" 200
+        respond "ChatGPT Proxy - Status: OK" 200
+        header Content-Type "text/plain"
     }
     
-    # Admin endpoint (optional)
-    handle /admin* {
-        reverse_proxy localhost:2019
+    # Favicon handling
+    handle /favicon.ico {
+        reverse_proxy https://chatgpt.com
     }
     
     # Main reverse proxy for ChatGPT
     handle {
         reverse_proxy https://chatgpt.com {
-            # Forward original request information - Critical for ChatGPT
+            # Essential headers for ChatGPT
             header_up Host chatgpt.com
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto https
             header_up User-Agent {header.User-Agent}
             header_up Accept {header.Accept}
             header_up Accept-Language {header.Accept-Language}
             header_up Accept-Encoding {header.Accept-Encoding}
-            header_up Referer {header.Referer}
-            header_up Origin https://chatgpt.com
+            header_up Cookie {header.Cookie}
+            header_up Authorization {header.Authorization}
             
-            # Handle location redirects - Replace with your Railway domain
-            header_down Location http://chatgpt.com https://{$RAILWAY_STATIC_URL}
-            header_down Location https://chatgpt.com https://{$RAILWAY_STATIC_URL}
-            header_down Location https://chat.openai.com https://{$RAILWAY_STATIC_URL}
+            # Handle redirects
+            header_down Location https://chatgpt.com https://{$RAILWAY_STATIC_URL:localhost:8080}
+            header_down Location http://chatgpt.com https://{$RAILWAY_STATIC_URL:localhost:8080}
             
-            # Handle content replacements for proper functionality
-            header_down -Server
-            header_down -X-Powered-By
-            
-            # Health check for upstream
-            health_uri /
-            health_interval 30s
-            health_timeout 10s
-            
-            # Failover settings
-            fail_duration 30s
-            max_fails 3
-            unhealthy_latency 10s
-            
-            # Connection settings - Important for ChatGPT's real-time features
+            # Connection settings
             transport http {
                 keepalive 30s
-                keepalive_idle_conns 10
                 read_timeout 60s
                 write_timeout 60s
-                dial_timeout 30s
             }
         }
     }
     
-    # Security headers - Optimized for ChatGPT
-    header {
-        # Remove sensitive headers
-        -X-Powered-By
-        -Server
-        
-        # Add security headers (careful not to break ChatGPT functionality)
-        X-Content-Type-Options nosniff
-        X-XSS-Protection "1; mode=block"
-        Referrer-Policy "strict-origin-when-cross-origin"
-        
-        # Custom headers for testing
-        X-Proxy-By "Railway-ChatGPT-Proxy"
-        X-Proxy-Version "1.0"
-    }
-    
-    # Rate limiting (adjusted for ChatGPT usage patterns)
-    rate_limit {
-        zone chatgpt_proxy {
-            key {remote_host}
-            events 200
-            window 1m
-        }
-    }
-    
-    # Comprehensive logging
+    # Basic logging
     log {
-        format json
         level INFO
-    }
-    
-    # Error handling
-    handle_errors {
-        @5xx expression {http.error.status_code} >= 500
-        respond @5xx "ChatGPT Proxy Error: {http.error.status_code}" {http.error.status_code}
     }
 }
