@@ -1,12 +1,29 @@
-FROM node:18-alpine
+# Dockerfile for Railway Caddy Reverse Proxy
+FROM caddy:2.7.6-alpine
 
-WORKDIR /app
+# Install curl for health checks
+RUN apk add --no-cache curl
 
-COPY package.json ./
-RUN npm install
+# Create necessary directories
+RUN mkdir -p /etc/caddy /var/log/caddy /var/lib/caddy
 
-COPY server.js ./
+# Copy Caddyfile
+COPY Caddyfile /etc/caddy/Caddyfile
 
-EXPOSE 80
+# Create a simple health check script
+RUN echo '#!/bin/sh' > /health.sh && \
+    echo 'curl -f http://localhost:$PORT/health || exit 1' >> /health.sh && \
+    chmod +x /health.sh
 
-CMD ["npm", "start"]
+# Set proper permissions
+RUN chown -R caddy:caddy /etc/caddy /var/log/caddy /var/lib/caddy
+
+# Expose port (Railway will assign this dynamically)
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /health.sh
+
+# Run Caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
