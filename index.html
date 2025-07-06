@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Proxy - Railway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 3em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .status {
+            background: linear-gradient(45deg, #00c851, #00a085);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .access-button {
+            display: block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px auto;
+            max-width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .access-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .info-card {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-card li {
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .info-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .info-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .deployment-info {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #ffc107;
+            margin-top: 30px;
+        }
+        
+        .deployment-info h3 {
+            color: #e65100;
+            margin-bottom: 15px;
+        }
+        
+        .tech-stack {
+            background: rgba(40, 167, 69, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #28a745;
+            margin-top: 20px;
+        }
+        
+        .tech-stack h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            
+            .title {
+                font-size: 2.5em;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🤖 ChatGPT Proxy</h1>
+            <p class="subtitle">Powered by Railway.app</p>
+        </div>
+        
+        <div class="status">
+            ✅ Proxy Server is Live and Running
+        </div>
+        
+        <a href="/chatgpt" class="access-button">
+            🚀 Access ChatGPT Now
+        </a>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>📋 Available Endpoints</h3>
+                <ul>
+                    <li><a href="/chatgpt">/chatgpt</a> - Main ChatGPT Interface</li>
+                    <li><a href="/api">/api</a> - API Proxy</li>
+                    <li><a href="/health">/health</a> - Health Check</li>
+                    <li><a href="/ping">/ping</a> - Ping Test</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3>🔧 How It Works</h3>
+                <ul>
+                    <li>Nginx reverse proxy</li>
+                    <li>Routes to chatgpt.com</li>
+                    <li>Automatic SSL/HTTPS</li>
+                    <li>WebSocket support</li>
+                    <li>Optimized headers</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="deployment-info">
+            <h3>🚂 Railway.app Deployment</h3>
+            <p>This ChatGPT proxy is deployed on Railway.app with automatic HTTPS, zero-config deployment, and instant scaling. Access your proxy from anywhere with your unique Railway URL.</p>
+        </div>
+        
+        <div class="tech-stack">
+            <h3>⚡ Tech Stack</h3>
+            <p><strong>Server:</strong> Nginx Alpine Docker Container<br>
+            <strong>Platform:</strong> Railway.app<br>
+            <strong>SSL:</strong> Automatic HTTPS<br>
+            <strong>DNS:</strong> Google DNS (8.8.8.8)<br>
+            <strong>Target:</strong> chatgpt.com</p>
+        </div>
+    </div>
+</body>
+</html>
