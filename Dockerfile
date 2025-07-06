@@ -1,15 +1,10 @@
 FROM nginx:alpine
 
-# Copy configuration and content
+# Copy simple config
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY index.html /usr/share/nginx/html/index.html
 
-# Create log directory
-RUN mkdir -p /var/log/nginx
-
-# Expose port 80
+# Expose port
 EXPOSE 80
 
-# Test configuration and start
-RUN nginx -t
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
