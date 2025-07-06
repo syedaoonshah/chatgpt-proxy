@@ -1,4 +1,4 @@
-# Dockerfile for Railway Caddy Reverse Proxy
+# Fixed Dockerfile for Railway ChatGPT Reverse Proxy
 FROM caddy:2.7.6-alpine
 
 # Install curl for health checks
@@ -12,18 +12,21 @@ COPY Caddyfile /etc/caddy/Caddyfile
 
 # Create a simple health check script
 RUN echo '#!/bin/sh' > /health.sh && \
-    echo 'curl -f http://localhost:$PORT/health || exit 1' >> /health.sh && \
+    echo 'curl -f http://localhost:${PORT:-8080}/health || exit 1' >> /health.sh && \
     chmod +x /health.sh
 
 # Set proper permissions
 RUN chown -R caddy:caddy /etc/caddy /var/log/caddy /var/lib/caddy
 
-# Expose port (Railway will assign this dynamically)
-EXPOSE 8080
+# Expose the port
+EXPOSE ${PORT:-8080}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD /health.sh
 
-# Run Caddy
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+# Switch to caddy user
+USER caddy
+
+# Run Caddy with explicit port binding
+CMD ["sh", "-c", "caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
